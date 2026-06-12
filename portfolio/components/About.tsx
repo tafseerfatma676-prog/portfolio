@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 const timeline = [
   { year: '2022', event: 'Started learning AI tools & automation' },
   { year: '2023', event: 'Built first client workflow — saved 20hrs/week' },
@@ -16,15 +18,15 @@ export default function About() {
             <div className="relative w-full max-w-sm mx-auto">
               {/* Glow ring */}
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-brand-600/30 to-accent-500/20 blur-2xl scale-105" />
-              {/* Avatar placeholder — replace with real photo */}
-              <div className="relative rounded-2xl border border-white/10 bg-gray-900 aspect-square flex items-center justify-center overflow-hidden">
-                <div className="text-center">
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-brand-600 to-accent-500 flex items-center justify-center text-4xl font-display font-bold mx-auto mb-4">
-                    SF
-                  </div>
-                  <p className="text-gray-500 text-sm">Add your photo here</p>
-                  <p className="text-gray-600 text-xs mt-1">Replace this div with an &lt;Image /&gt; tag</p>
-                </div>
+              {/* Profile image */}
+              <div className="relative rounded-2xl border border-white/10 overflow-hidden aspect-square">
+                <Image
+                  src="/profile.png"
+                  alt="Shamsheer Fatma"
+                  fill
+                  className="object-cover object-top"
+                  priority
+                />
               </div>
               {/* Floating badge */}
               <div className="absolute -bottom-4 -right-4 bg-gray-900 border border-white/10 rounded-xl px-4 py-3 glow-green">
@@ -77,6 +79,7 @@ export default function About() {
               </a>
             </div>
           </div>
+
         </div>
       </div>
     </section>
