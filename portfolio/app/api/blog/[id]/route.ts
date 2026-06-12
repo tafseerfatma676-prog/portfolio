@@ -5,12 +5,12 @@ import connectDB from '@/lib/mongodb'
 import Blog from '@/lib/models/Blog'
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  _: Request,
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params
     await connectDB()
-    const id = params.id
     let blog = null
     try {
       blog = await Blog.findById(id)
@@ -26,14 +26,14 @@ export async function GET(
 
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions)
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
+    const { id } = await context.params
     await connectDB()
-    const id = params.id
     const body = await req.json()
     if (body.content) {
       const wordCount = body.content.split(/\s+/).length
@@ -47,15 +47,15 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
+  _: Request,
+  context: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions)
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
+    const { id } = await context.params
     await connectDB()
-    const id = params.id
     await Blog.findByIdAndDelete(id)
     return NextResponse.json({ success: true })
   } catch {
