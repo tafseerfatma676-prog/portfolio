@@ -1,16 +1,10 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
 import connectDB from '@/lib/mongodb'
 import Blog from '@/lib/models/Blog'
+import Link from 'next/link'
 
 export default async function AdminBlog() {
-  const session = await getServerSession(authOptions)
-  if (!session) redirect('/admin/login')
-
   await connectDB()
-  const blogs = await Blog.find().sort({ createdAt: -1 })
+  const blogs = await Blog.find().sort({ createdAt: -1 }).lean()
 
   return (
     <div>

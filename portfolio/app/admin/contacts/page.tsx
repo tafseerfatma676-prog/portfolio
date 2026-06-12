@@ -1,15 +1,10 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
-import { redirect } from 'next/navigation'
 import connectDB from '@/lib/mongodb'
 import Contact from '@/lib/models/Contact'
+import Link from 'next/link'
 
 export default async function AdminContacts() {
-  const session = await getServerSession(authOptions)
-  if (!session) redirect('/admin/login')
-
   await connectDB()
-  const contacts = await Contact.find().sort({ createdAt: -1 })
+  const contacts = await Contact.find().sort({ createdAt: -1 }).lean()
 
   const statusColor: Record<string, string> = {
     new:     'bg-rose-500/10 text-rose-400 border-rose-500/20',

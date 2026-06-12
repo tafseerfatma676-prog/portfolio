@@ -1,17 +1,11 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
 import connectDB from '@/lib/mongodb'
 import Contact    from '@/lib/models/Contact'
 import Project    from '@/lib/models/Project'
 import Blog       from '@/lib/models/Blog'
 import Subscriber from '@/lib/models/Subscriber'
+import Link       from 'next/link'
 
 export default async function AdminDashboard() {
-  const session = await getServerSession(authOptions)
-  if (!session) redirect('/admin/login')
-
   await connectDB()
   const [contacts, projects, blogs, subscribers] = await Promise.all([
     Contact.countDocuments(),
@@ -22,11 +16,11 @@ export default async function AdminDashboard() {
   const newLeads = await Contact.countDocuments({ status: 'new' })
 
   const stats = [
-    { label: 'New Leads',    value: newLeads,    icon: '🔥', href: '/admin/contacts', color: 'border-rose-500/20 bg-rose-500/5'  },
-    { label: 'Total Leads',  value: contacts,    icon: '📬', href: '/admin/contacts', color: 'border-brand-600/20 bg-brand-600/5' },
-    { label: 'Projects',     value: projects,    icon: '🛠',  href: '/admin/projects', color: 'border-purple-500/20 bg-purple-500/5' },
-    { label: 'Blog Posts',   value: blogs,       icon: '✍️',  href: '/admin/blog',     color: 'border-amber-500/20 bg-amber-500/5'   },
-    { label: 'Subscribers',  value: subscribers, icon: '📧', href: '#',               color: 'border-emerald-500/20 bg-emerald-500/5' },
+    { label: 'New Leads',   value: newLeads,    icon: '🔥', href: '/admin/contacts', color: 'border-rose-500/20 bg-rose-500/5'     },
+    { label: 'Total Leads', value: contacts,    icon: '📬', href: '/admin/contacts', color: 'border-brand-600/20 bg-brand-600/5'   },
+    { label: 'Projects',    value: projects,    icon: '🛠',  href: '/admin/projects', color: 'border-purple-500/20 bg-purple-500/5' },
+    { label: 'Blog Posts',  value: blogs,       icon: '✍️',  href: '/admin/blog',     color: 'border-amber-500/20 bg-amber-500/5'   },
+    { label: 'Subscribers', value: subscribers, icon: '📧', href: '#',               color: 'border-emerald-500/20 bg-emerald-500/5'},
   ]
 
   const recentContacts = await Contact.find().sort({ createdAt: -1 }).limit(5).lean()
@@ -38,7 +32,6 @@ export default async function AdminDashboard() {
         <p className="text-gray-600 text-sm mt-1">Welcome back, Shamsheer 👋</p>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
         {stats.map(s => (
           <Link key={s.label} href={s.href}
@@ -50,8 +43,7 @@ export default async function AdminDashboard() {
         ))}
       </div>
 
-      {/* Quick actions */}
-      <div className="grid md:grid-cols-2 gap-6 mb-10">
+      <div className="grid md:grid-cols-2 gap-6">
         <div>
           <h2 className="font-display font-semibold text-white mb-4">Quick Actions</h2>
           <div className="grid grid-cols-2 gap-3">
@@ -69,7 +61,6 @@ export default async function AdminDashboard() {
           </div>
         </div>
 
-        {/* Recent contacts */}
         <div>
           <h2 className="font-display font-semibold text-white mb-4">Recent Inquiries</h2>
           <div className="space-y-2">
@@ -84,7 +75,7 @@ export default async function AdminDashboard() {
                   <p className="text-gray-600 text-xs">{c.subject}</p>
                 </div>
                 <span className={`text-xs px-2 py-0.5 rounded-full ${
-                  c.status === 'new' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                  c.status === 'new'     ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
                   : c.status === 'read' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
                   : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                 }`}>

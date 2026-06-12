@@ -1,16 +1,10 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
 import connectDB from '@/lib/mongodb'
 import Project from '@/lib/models/Project'
+import Link from 'next/link'
 
 export default async function AdminProjects() {
-  const session = await getServerSession(authOptions)
-  if (!session) redirect('/admin/login')
-
   await connectDB()
-  const projects = await Project.find().sort({ order: 1, createdAt: -1 })
+  const projects = await Project.find().sort({ order: 1, createdAt: -1 }).lean()
 
   return (
     <div>
@@ -47,12 +41,10 @@ export default async function AdminProjects() {
                   ))}
                 </div>
               </div>
-              <div className="flex gap-2">
-                <Link href={`/admin/projects/${p._id}`}
-                  className="px-3 py-1.5 rounded-lg border border-white/10 text-gray-400 hover:text-white text-xs transition-all">
-                  Edit
-                </Link>
-              </div>
+              <Link href={`/admin/projects/${p._id}`}
+                className="px-3 py-1.5 rounded-lg border border-white/10 text-gray-400 hover:text-white text-xs transition-all">
+                Edit
+              </Link>
             </div>
           ))}
         </div>
